@@ -1,1 +1,149 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaGuard - AI-Based Pharmacogenomic Risk Prediction System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Hero Section -->
+    <section id="hero" class="hero-section">
+        <canvas id="particleCanvas"></canvas>
+        
+        <div class="hero-overlay">
+            <header class="header">
+                <div class="logo">
+                    <svg class="dna-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="dnaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#00f5ff;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#4dffb8;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <!-- DNA Helix -->
+                        <path d="M20 30 Q50 20 80 30 Q50 40 20 30" stroke="url(#dnaGradient)" stroke-width="3" fill="none"/>
+                        <path d="M20 50 Q50 40 80 50 Q50 60 20 50" stroke="url(#dnaGradient)" stroke-width="3" fill="none"/>
+                        <path d="M20 70 Q50 60 80 70 Q50 80 20 70" stroke="url(#dnaGradient)" stroke-width="3" fill="none"/>
+                        <!-- Shield -->
+                        <path d="M45 15 L55 15 L60 25 L60 35 Q50 45 40 35 L40 25 Z" fill="url(#dnaGradient)" opacity="0.8"/>
+                        <circle cx="50" cy="30" r="3" fill="#ffffff"/>
+                    </svg>
+                    <span class="logo-text">PharmaGuard</span>
+                </div>
+            </header>
+            
+            <div class="hero-content">
+                <h1 class="main-heading">
+                    <span class="letter">P</span><span class="letter">h</span><span class="letter">a</span><span class="letter">r</span><span class="letter">m</span><span class="letter">a</span><span class="letter">G</span><span class="letter">u</span><span class="letter">a</span><span class="letter">r</span><span class="letter">d</span>
+                </h1>
+                <h2 class="subheading">AI-Powered Precision Medicine</h2>
+                <p class="hero-paragraph">
+                    We combine genomics and artificial intelligence to predict drug safety and personalize treatment with scientific precision.
+                </p>
+                <p class="motivational-line">
+                    The right medicine. The right dose. The right life.
+                </p>
+                <button class="cta-button" id="ctaButton">Begin Risk Analysis</button>
+            </div>
+        </div>
+        
+        <!-- DNA Helix Background -->
+        <div class="dna-helix-bg">
+            <svg class="dna-helix" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="helixGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#00b4d8;stop-opacity:0.3" />
+                        <stop offset="50%" style="stop-color:#4dffb8;stop-opacity:0.2" />
+                        <stop offset="100%" style="stop-color:#00f5ff;stop-opacity:0.3" />
+                    </linearGradient>
+                </defs>
+                <!-- Animated DNA strands -->
+                <path class="dna-strand" d="M100 200 Q600 100 1100 200 Q600 300 100 200" stroke="url(#helixGradient)" stroke-width="2" fill="none"/>
+                <path class="dna-strand" d="M100 300 Q600 200 1100 300 Q600 400 100 300" stroke="url(#helixGradient)" stroke-width="2" fill="none"/>
+                <path class="dna-strand" d="M100 400 Q600 300 1100 400 Q600 500 100 400" stroke="url(#helixGradient)" stroke-width="2" fill="none"/>
+                <path class="dna-strand" d="M100 500 Q600 400 1100 500 Q600 600 100 500" stroke="url(#helixGradient)" stroke-width="2" fill="none"/>
+                <path class="dna-strand" d="M100 600 Q600 500 1100 600 Q600 700 100 600" stroke="url(#helixGradient)" stroke-width="2" fill="none"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Transition Overlay -->
+    <div id="transition-overlay" class="transition-overlay">
+        <div class="dna-loader">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="loaderGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#00f5ff"/>
+                        <stop offset="100%" style="stop-color:#4dffb8"/>
+                    </linearGradient>
+                </defs>
+                <path class="loader-strand" d="M20 30 Q50 20 80 30 Q50 40 20 30" stroke="url(#loaderGradient)" stroke-width="4" fill="none"/>
+                <path class="loader-strand" d="M20 50 Q50 40 80 50 Q50 60 20 50" stroke="url(#loaderGradient)" stroke-width="4" fill="none"/>
+                <path class="loader-strand" d="M20 70 Q50 60 80 70 Q50 80 20 70" stroke="url(#loaderGradient)" stroke-width="4" fill="none"/>
+            </svg>
+        </div>
+        <p>Loading PharmaGuard Dashboard...</p>
+    </div>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="dashboard-section hidden">
+        <nav class="top-nav">
+            <div class="nav-logo">
+                <svg class="dna-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="navDnaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#00f5ff;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#4dffb8;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M20 30 Q50 20 80 30 Q50 40 20 30" stroke="url(#dnaGradient)" stroke-width="3" fill="none"/>
+                    <path d="M20 50 Q50 40 80 50 Q50 60 20 50" stroke="url(#dnaGradient)" stroke-width="3" fill="none"/>
+                    <path d="M20 70 Q50 60 80 70 Q50 80 20 70" stroke="url(#dnaGradient)" stroke-width="3" fill="none"/>
+                    <path d="M45 15 L55 15 L60 25 L60 35 Q50 45 40 35 L40 25 Z" fill="url(#dnaGradient)" opacity="0.8"/>
+                    <circle cx="50" cy="30" r="3" fill="#ffffff"/>
+                </svg>
+                <span class="nav-logo-text">PharmaGuard</span>
+            </div>
+            <div class="nav-controls">
+                <button class="theme-toggle" id="themeToggle">
+                    <svg class="sun-icon" viewBox="0 0 24 24">
+                        <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"/>
+                    </svg>
+                    <svg class="moon-icon" viewBox="0 0 24 24">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+        
+        <div class="dashboard-content">
+            <div class="dashboard-main">
+                <h1>Welcome to Your Personalized Risk Analysis</h1>
+                <p>Upload your genomic data to begin the analysis.</p>
+                <!-- Placeholder for dashboard content -->
+                <div class="dashboard-placeholder">
+                    <div class="analysis-card">
+                        <h3>Genomic Analysis</h3>
+                        <p>Upload and analyze your genetic data for personalized drug recommendations.</p>
+                    </div>
+                    <div class="analysis-card">
+                        <h3>Risk Prediction</h3>
+                        <p>Get AI-powered predictions for drug safety and efficacy.</p>
+                    </div>
+                    <div class="analysis-card">
+                        <h3>Treatment Plans</h3>
+                        <p>Receive customized treatment plans based on your unique profile.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
