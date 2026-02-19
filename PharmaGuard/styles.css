@@ -817,8 +817,8 @@ body.light .vcf-upload-box:hover .upload-icon {
 }
 
 .drug-title {
-    font-size: 0.8rem;
-    font-weight: 700;
+    font-size: 1.2rem;
+    font-weight: 900;
     letter-spacing: 1.5px;
     text-transform: uppercase;
     color: rgba(255, 255, 255, 0.8);
@@ -1036,6 +1036,8 @@ body.light .analyze-btn.loading {
 .btn-loading {
     transition: opacity 0.3s ease;
 }
+
+.analyze-btn:hover {
     transform: translateY(-2px);
 }
 
@@ -1047,6 +1049,213 @@ body.light .analyze-btn.loading {
 
 .analyze-btn.loading {
     position: relative;
+}
+
+/* Selected Drugs Container */
+.selected-drugs-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(0, 212, 255, 0.05);
+    border: 1px solid rgba(0, 212, 255, 0.15);
+    min-height: 44px;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.selected-drugs-container:empty {
+    display: none;
+}
+
+/* Drug Pill Style */
+.drug-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 153, 255, 0.2));
+    border: 1px solid rgba(0, 212, 255, 0.4);
+    color: var(--text-primary);
+    font-size: 12px;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+    white-space: nowrap;
+    animation: pillFadeIn 0.3s ease-out;
+    box-shadow: 0 2px 8px rgba(0, 212, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.drug-pill:hover {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(0, 153, 255, 0.3));
+    box-shadow: 0 4px 12px rgba(0, 212, 255, 0.2);
+    border-color: rgba(0, 212, 255, 0.6);
+    transform: translateY(-2px);
+}
+
+.drug-pill-close {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: rgba(255, 0, 85, 0.1);
+    color: rgba(255, 0, 85, 0.7);
+    font-size: 12px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.drug-pill-close:hover {
+    background: rgba(255, 0, 85, 0.2);
+    color: rgba(255, 0, 85, 1);
+}
+
+/* Animation: Pill Fade In */
+@keyframes pillFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.85) translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Animation: Pill Fade Out */
+@keyframes pillFadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.85) translateY(-5px);
+    }
+}
+
+/* Light Theme - Selected Drugs */
+body.light .selected-drugs-container {
+    background: rgba(0, 128, 255, 0.05);
+    border-color: rgba(0, 128, 255, 0.2);
+}
+
+body.light .drug-pill {
+    background: linear-gradient(135deg, rgba(0, 128, 255, 0.15), rgba(64, 160, 255, 0.15));
+    border-color: rgba(0, 128, 255, 0.4);
+    box-shadow: 0 2px 8px rgba(0, 128, 255, 0.1);
+}
+
+body.light .drug-pill:hover {
+    background: linear-gradient(135deg, rgba(0, 128, 255, 0.25), rgba(64, 160, 255, 0.25));
+    border-color: rgba(0, 128, 255, 0.6);
+    box-shadow: 0 4px 12px rgba(0, 128, 255, 0.2);
+}
+
+/* Drug Action Buttons */
+.drug-action-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 30px;
+    width: 100%;
+}
+
+.add-drug-btn,
+.remove-drug-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.add-drug-btn {
+    background: linear-gradient(135deg, #00d4ff, #0099ff);
+    color: white;
+}
+
+.add-drug-btn:hover {
+    background: linear-gradient(135deg, #00b8ff, #0077ff);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
+}
+
+.add-drug-btn:active {
+    transform: translateY(-1px);
+}
+
+.add-drug-btn .btn-icon {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.remove-drug-btn {
+    background: linear-gradient(135deg, #ff3366, #ff0055);
+    color: white;
+}
+
+.remove-drug-btn:hover {
+    background: linear-gradient(135deg, #ff1a52, #da003f);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(255, 0, 85, 0.4);
+}
+
+.remove-drug-btn:active {
+    transform: translateY(-1px);
+}
+
+.remove-drug-btn .btn-icon {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Light theme action buttons */
+body.light .add-drug-btn {
+    background: linear-gradient(135deg, #0080ff, #4aa8d8);
+    box-shadow: 0 4px 12px rgba(0, 128, 255, 0.2);
+}
+
+body.light .add-drug-btn:hover {
+    background: linear-gradient(135deg, #0066cc, #3a8fc0);
+    box-shadow: 0 6px 20px rgba(0, 128, 255, 0.35);
+}
+
+body.light .remove-drug-btn {
+    background: linear-gradient(135deg, #ff6699, #ff3366);
+    box-shadow: 0 4px 12px rgba(255, 54, 102, 0.2);
+}
+
+body.light .remove-drug-btn:hover {
+    background: linear-gradient(135deg, #ff5588, #ff1a52);
+    box-shadow: 0 6px 20px rgba(255, 54, 102, 0.35);
+}
+
+/* Shake animation for empty state */
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-8px);
+    }
+    75% {
+        transform: translateX(8px);
+    }
 }
 
 body.light .analyze-btn {
