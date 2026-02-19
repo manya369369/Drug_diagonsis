@@ -115,9 +115,8 @@
                                 type="text" 
                                 id="drugInput" 
                                 class="drug-input"
-                                placeholder="Example: CLOPIDOGREL, WARFARIN"
+                                placeholder="Manually type or select from dropdown"
                                 autocomplete="off"
-                                readonly
                             >
                             <div class="drug-dropdown-list" id="drugDropdownList" style="display: none;">
                                 <div class="drug-option" data-value="CODEINE">CODEINE</div>
@@ -129,6 +128,9 @@
                             </div>
                         </div>
                         
+                        <!-- Selected Drugs Container -->
+                        <div class="selected-drugs-container" id="selectedDrugsContainer"></div>
+                        
                         <button id="analyzeDrugBtn" class="analyze-btn">
                             <span class="btn-content">Analyze Pharmacogenomic Risk</span>
                             <span class="btn-loading" style="display: none;">
@@ -136,6 +138,18 @@
                                 Analyzing Genetic Risk...
                             </span>
                         </button>
+                        
+                        <!-- Action Buttons -->
+                        <div class="drug-action-buttons">
+                            <button id="addDrugBtn" class="add-drug-btn">
+                                <span class="btn-icon">+</span>
+                                <span class="btn-text">Add New Drug</span>
+                            </button>
+                            <button id="removeDrugBtn" class="remove-drug-btn">
+                                <span class="btn-icon">−</span>
+                                <span class="btn-text">Remove Current Drug</span>
+                            </button>
+                        </div>
                     </div>
                     
                     <!-- File List Container -->
