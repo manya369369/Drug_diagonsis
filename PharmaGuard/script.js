@@ -189,8 +189,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Theme toggle
     themeToggle.addEventListener('click', () => {
-        body.classList.toggle('dark-theme');
-        themeToggle.textContent = body.classList.contains('dark-theme') ? '☀️' : '🌙';
+        body.classList.toggle('light');
+        localStorage.setItem('theme', body.classList.contains('light') ? 'light' : 'dark');
     });
 
     // Recreate particles on resize
@@ -203,5 +203,230 @@ document.addEventListener('DOMContentLoaded', function() {
         allParticlesComplete = false;
         animationActive = true;
         requestAnimationFrame(animate);
+    });
+
+    // VCF File Upload Functionality
+    const vcfUploadBox = document.getElementById('vcfUploadBox');
+    const vcfFileInput = document.getElementById('vcfFileInput');
+    const fileName = document.getElementById('fileName');
+    const fileListContainer = document.getElementById('fileListContainer');
+    const fileList = document.getElementById('fileList');
+    const addMoreBtn = document.getElementById('addMoreBtn');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const themeToggleIntro = document.getElementById('themeToggleIntro');
+
+    // Maximum file size: 5MB
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
+    let uploadedFiles = [];
+
+    // Theme toggle for intro section
+    themeToggleIntro.addEventListener('click', () => {
+        body.classList.toggle('light');
+        localStorage.setItem('theme', body.classList.contains('light') ? 'light' : 'dark');
+    });
+
+    // Restore theme from localStorage
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+        body.classList.add('light');
+    }
+
+    // Click to browse
+    vcfUploadBox.addEventListener('click', () => {
+        vcfFileInput.click();
+    });
+
+    // Handle file selection from input
+    vcfFileInput.addEventListener('change', (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length > 0) {
+            files.forEach(file => {
+                validateAndAddFile(file);
+            });
+        }
+    });
+
+    // Drag and drop functionality
+    vcfUploadBox.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        vcfUploadBox.classList.add('drag-over');
+    });
+
+    vcfUploadBox.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        vcfUploadBox.classList.remove('drag-over');
+    });
+
+    vcfUploadBox.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        vcfUploadBox.classList.remove('drag-over');
+
+        const files = Array.from(e.dataTransfer.files);
+        files.forEach(file => {
+            validateAndAddFile(file);
+        });
+    });
+
+    // Validate and add file to list
+    function validateAndAddFile(file) {
+        // Clear error message
+        fileName.textContent = '';
+        fileName.classList.remove('error');
+
+        // Check file extension
+        if (!file.name.endsWith('.vcf')) {
+            fileName.textContent = '❌ Error: Only .vcf files are accepted';
+            fileName.classList.add('error');
+            return;
+        }
+
+        // Check file size
+        if (file.size > MAX_FILE_SIZE) {
+            fileName.textContent = `❌ Error: File size (${(file.size / 1024 / 1024).toFixed(2)}MB) exceeds 5MB limit`;
+            fileName.classList.add('error');
+            return;
+        }
+
+        // Check if file already exists
+        if (uploadedFiles.some(f => f.name === file.name && f.size === file.size)) {
+            fileName.textContent = '⚠️ This file is already uploaded';
+            fileName.classList.add('error');
+            return;
+        }
+
+        // Add file to the list
+        uploadedFiles.push(file);
+        updateFileList();
+        vcfFileInput.value = '';
+    }
+
+    // Update file list display
+    function updateFileList() {
+        if (uploadedFiles.length === 0) {
+            fileListContainer.style.display = 'none';
+            fileName.textContent = '';
+            return;
+        }
+
+        fileList.innerHTML = '';
+        uploadedFiles.forEach((file, index) => {
+            const fileItemDiv = document.createElement('div');
+            fileItemDiv.className = 'file-item';
+            fileItemDiv.innerHTML = `
+                <div class="file-info">
+                    <div class="file-check">✓</div>
+                    <div class="file-details">
+                        <div class="file-name-text">${file.name}</div>
+                        <div class="file-size">${(file.size / 1024).toFixed(2)} KB</div>
+                    </div>
+                </div>
+                <button class="file-remove-btn" data-index="${index}">Remove</button>
+            `;
+            fileList.appendChild(fileItemDiv);
+        });
+
+        // Add remove button listeners
+        document.querySelectorAll('.file-remove-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const index = parseInt(e.target.dataset.index);
+                uploadedFiles.splice(index, 1);
+                updateFileList();
+            });
+        });
+
+        fileListContainer.style.display = 'block';
+    }
+
+    // Add more files button
+    addMoreBtn.addEventListener('click', () => {
+        vcfFileInput.click();
+    });
+
+    // Analyze button
+    analyzeBtn.addEventListener('click', () => {
+        if (uploadedFiles.length > 0) {
+            // Show success message
+            const fileCount = uploadedFiles.length;
+            fileName.textContent = `✓ Ready to analyze ${fileCount} file(s)`;
+            fileName.classList.remove('error');
+            // Here you would typically send the files to your backend
+            console.log('Files ready for analysis:', uploadedFiles);
+        }
+    });
+
+    // Drug Section Functionality with Integrated Dropdown
+    const drugInput = document.getElementById('drugInput');
+    const drugDropdownList = document.getElementById('drugDropdownList');
+    const drugOptions = document.querySelectorAll('.drug-option');
+    const analyzeDrugBtn = document.getElementById('analyzeDrugBtn');
+
+    // Show dropdown when input is clicked
+    drugInput.addEventListener('click', () => {
+        drugDropdownList.style.display = drugDropdownList.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // Handle option selection
+    drugOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            const value = option.getAttribute('data-value');
+            drugInput.value = value;
+            drugDropdownList.style.display = 'none';
+        });
+
+        // Hover effect
+        option.addEventListener('mouseenter', () => {
+            option.style.backgroundColor = 'rgba(0, 245, 255, 0.15)';
+        });
+
+        option.addEventListener('mouseleave', () => {
+            option.style.backgroundColor = '';
+        });
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.drug-input-wrapper')) {
+            drugDropdownList.style.display = 'none';
+        }
+    });
+
+    // Analyze button with enhanced loading state
+    analyzeDrugBtn.addEventListener('click', () => {
+        const drugName = drugInput.value.trim();
+
+        if (!drugName) {
+            drugInput.style.borderColor = '#ff6b6b';
+            setTimeout(() => {
+                drugInput.style.borderColor = '';
+            }, 2000);
+            return;
+        }
+
+        // Show loading state
+        const btnContent = analyzeDrugBtn.querySelector('.btn-content');
+        const btnLoading = analyzeDrugBtn.querySelector('.btn-loading');
+
+        btnContent.style.display = 'none';
+        btnLoading.style.display = 'inline-flex';
+        analyzeDrugBtn.disabled = true;
+        analyzeDrugBtn.classList.add('loading');
+
+        // Simulate API call (2.5 seconds)
+        setTimeout(() => {
+            btnContent.style.display = 'inline';
+            btnLoading.style.display = 'none';
+            analyzeDrugBtn.disabled = false;
+            analyzeDrugBtn.classList.remove('loading');
+
+            // Log analysis
+            console.log('Pharmacogenomic Risk Analysis:', {
+                drugName: drugName,
+                uploadedFiles: uploadedFiles,
+                timestamp: new Date().toISOString()
+            });
+        }, 2500);
     });
 });
