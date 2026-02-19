@@ -357,34 +357,151 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Drug Section Functionality with Integrated Dropdown
+    // Drug Section Functionality with Multi-Drug Support
     const drugInput = document.getElementById('drugInput');
     const drugDropdownList = document.getElementById('drugDropdownList');
     const drugOptions = document.querySelectorAll('.drug-option');
     const analyzeDrugBtn = document.getElementById('analyzeDrugBtn');
+    const selectedDrugsContainer = document.getElementById('selectedDrugsContainer');
+    
+    // Track selected drugs
+    let selectedDrugs = [];
+    let defaultDrugOptions = ['CODEINE', 'WARFARIN', 'CLOPIDOGREL', 'SIMVASTATIN', 'AZATHIOPRINE', 'FLUOROURACIL'];
 
     // Show dropdown when input is clicked
     drugInput.addEventListener('click', () => {
         drugDropdownList.style.display = drugDropdownList.style.display === 'none' ? 'block' : 'none';
     });
 
-    // Handle option selection
-    drugOptions.forEach(option => {
-        option.addEventListener('click', () => {
-            const value = option.getAttribute('data-value');
-            drugInput.value = value;
-            drugDropdownList.style.display = 'none';
-        });
-
-        // Hover effect
-        option.addEventListener('mouseenter', () => {
-            option.style.backgroundColor = 'rgba(0, 245, 255, 0.15)';
-        });
-
-        option.addEventListener('mouseleave', () => {
-            option.style.backgroundColor = '';
-        });
+    // Handle typing in input - show filtered dropdown
+    drugInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toUpperCase().trim();
+        const allOptions = document.querySelectorAll('.drug-option');
+        
+        if (searchTerm.length > 0) {
+            allOptions.forEach(option => {
+                const value = option.getAttribute('data-value');
+                if (value.includes(searchTerm)) {
+                    option.style.display = 'block';
+                } else {
+                    option.style.display = 'none';
+                }
+            });
+            drugDropdownList.style.display = 'block';
+        } else {
+            allOptions.forEach(option => {
+                option.style.display = 'block';
+            });
+        }
     });
+
+    // Handle option selection from dropdown
+    function setupDropdownOptionListeners() {
+        const allOptions = document.querySelectorAll('.drug-option');
+        allOptions.forEach(option => {
+            // Remove old listeners by cloning
+            const newOption = option.cloneNode(true);
+            option.parentNode.replaceChild(newOption, option);
+        });
+        
+        document.querySelectorAll('.drug-option').forEach(option => {
+            option.addEventListener('click', () => {
+                const value = option.getAttribute('data-value');
+                addDrugToList(value);
+                drugInput.value = '';
+                drugDropdownList.style.display = 'none';
+            });
+
+            option.addEventListener('mouseenter', () => {
+                option.style.backgroundColor = 'rgba(0, 245, 255, 0.15)';
+            });
+
+            option.addEventListener('mouseleave', () => {
+                option.style.backgroundColor = '';
+            });
+        });
+    }
+
+    // Initialize dropdown listeners
+    setupDropdownOptionListeners();
+
+    // Handle Enter key to add drug
+    drugInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const drugName = drugInput.value.trim().toUpperCase();
+            
+            if (drugName) {
+                addDrugToList(drugName);
+                drugInput.value = '';
+                drugDropdownList.style.display = 'none';
+            }
+        }
+    });
+
+    // Add drug to selected list
+    function addDrugToList(drugName) {
+        const upperName = drugName.toUpperCase().trim();
+        
+        if (!upperName) return;
+        
+        // Check for duplicates (case-insensitive)
+        if (selectedDrugs.some(d => d.toUpperCase() === upperName)) {
+            // Show duplicate feedback
+            drugInput.style.borderColor = 'rgba(255, 165, 0, 0.6)';
+            drugInput.style.boxShadow = '0 0 10px rgba(255, 165, 0, 0.3)';
+            setTimeout(() => {
+                drugInput.style.borderColor = '';
+                drugInput.style.boxShadow = '';
+            }, 1000);
+            return;
+        }
+        
+        selectedDrugs.push(upperName);
+        renderDrugPills();
+        console.log('Drug added:', upperName, 'Selected drugs:', selectedDrugs);
+    }
+
+    // Render drug pills
+    function renderDrugPills() {
+        selectedDrugsContainer.innerHTML = '';
+        
+        selectedDrugs.forEach((drug, index) => {
+            const pill = document.createElement('div');
+            pill.className = 'drug-pill';
+            pill.innerHTML = `
+                ${drug}
+                <span class="drug-pill-close" data-index="${index}">×</span>
+            `;
+            selectedDrugsContainer.appendChild(pill);
+            
+            // Add close handler
+            pill.querySelector('.drug-pill-close').addEventListener('click', () => {
+                removeDrugFromList(index);
+            });
+        });
+        
+        // Update analyze button to include all selected drugs
+        updateAnalyzeButtonState();
+    }
+
+    // Remove drug from selected list
+    function removeDrugFromList(index) {
+        const removedDrug = selectedDrugs[index];
+        selectedDrugs.splice(index, 1);
+        renderDrugPills();
+        console.log('Drug removed:', removedDrug, 'Remaining drugs:', selectedDrugs);
+    }
+
+    // Update analyze button state
+    function updateAnalyzeButtonState() {
+        const btnContent = analyzeDrugBtn.querySelector('.btn-content');
+        if (selectedDrugs.length > 0) {
+            btnContent.textContent = `Analyze ${selectedDrugs.length} Drug(s)`;
+        } else {
+            btnContent.textContent = 'Analyze Pharmacogenomic Risk';
+        }
+    }
 
     // Close dropdown when clicking outside
     document.addEventListener('click', (e) => {
@@ -395,9 +512,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Analyze button with enhanced loading state
     analyzeDrugBtn.addEventListener('click', () => {
-        const drugName = drugInput.value.trim();
-
-        if (!drugName) {
+        if (selectedDrugs.length === 0) {
             drugInput.style.borderColor = '#ff6b6b';
             setTimeout(() => {
                 drugInput.style.borderColor = '';
@@ -423,10 +538,57 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Log analysis
             console.log('Pharmacogenomic Risk Analysis:', {
-                drugName: drugName,
+                drugs: selectedDrugs,
                 uploadedFiles: uploadedFiles,
                 timestamp: new Date().toISOString()
             });
         }, 2500);
+    });
+
+    // Action Buttons
+    const addDrugBtn = document.getElementById('addDrugBtn');
+    const removeDrugBtn = document.getElementById('removeDrugBtn');
+
+    // Add New Drug - Add typed value to list or focus input
+    addDrugBtn.addEventListener('click', () => {
+        const currentInput = drugInput.value.trim().toUpperCase();
+        
+        if (currentInput) {
+            // Add the current input value to selected drugs
+            addDrugToList(currentInput);
+            drugInput.value = '';
+            drugDropdownList.style.display = 'none';
+        }
+        
+        // Highlight animation and focus
+        drugInput.style.borderColor = 'rgba(0, 212, 255, 0.6)';
+        drugInput.style.boxShadow = '0 0 15px rgba(0, 212, 255, 0.4)';
+        drugInput.focus();
+
+        setTimeout(() => {
+            drugInput.style.borderColor = '';
+            drugInput.style.boxShadow = '';
+        }, 1500);
+
+        console.log('Add new drug initiated');
+    });
+
+    // Remove Current Drug - Remove last from selected or show message
+    removeDrugBtn.addEventListener('click', () => {
+        if (selectedDrugs.length > 0) {
+            const lastIndex = selectedDrugs.length - 1;
+            removeDrugFromList(lastIndex);
+        } else {
+            // Shake animation if empty
+            removeDrugBtn.style.animation = 'shake 0.5s ease-in-out';
+            removeDrugBtn.style.borderColor = 'rgba(255, 0, 85, 0.6)';
+
+            setTimeout(() => {
+                removeDrugBtn.style.animation = '';
+                removeDrugBtn.style.borderColor = '';
+            }, 500);
+
+            console.log('No drugs to remove');
+        }
     });
 });
